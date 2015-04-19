@@ -21,6 +21,8 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 
 scalacOptions in Test ++= Seq("-Yrangepos")
 
+resolvers += "Eclipse paho" at "https://repo.eclipse.org/content/repositories/paho-releases/"
+
 resolvers += "ruimo.com" at "http://static.ruimo.com/release"
 
 // Eclipse paho

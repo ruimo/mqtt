@@ -10,10 +10,13 @@ object Mqtt {
   val logger = LoggerFactory.getLogger(getClass)
 
   def withClient[T](
-    url: String, clientId: String, connectOption: Option[MqttConnectOptions] = None
+    url: String, clientId: String, 
+    connectOption: Option[MqttConnectOptions] = None,
+    callback: Option[MqttCallback] = None
   )(f: MqttClient => T): Try[T] = 
     Try {
       val c = new MqttClient(url, clientId)
+      callback.foreach { callback => c.setCallback(callback) }
       connectOption match {
         case None => 
           println("Connecting without token...")
@@ -42,12 +45,13 @@ object Mqtt {
     }
 
   def withClientWithUserPassword[T](
-    url: String, clientId: String, user: String, password: String
+    url: String, clientId: String, user: String, password: String,
+    callback: Option[MqttCallback] = None
   )(f: MqttClient => T): Try[T] = {
     val connectOption = new MqttConnectOptions
     connectOption.setUserName(user)
     connectOption.setPassword(password.toCharArray)
 
-    withClient(url, clientId, Some(connectOption))(f)
+    withClient(url, clientId, Some(connectOption), callback)(f)
   }
 }

@@ -1,7 +1,7 @@
 package com.ruimo.mqtt
 
 import scala.util.{Try, Success, Failure}
-import org.eclipse.paho.client.mqttv3.{MqttClient, MqttException, MqttMessage, MqttConnectOptions}
+import org.eclipse.paho.client.mqttv3.{MqttClient, MqttException, MqttMessage, MqttConnectOptions, MqttCallback}
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,13 +19,13 @@ object Mqtt {
       callback.foreach { callback => c.setCallback(callback) }
       connectOption match {
         case None => 
-          println("Connecting without token...")
+          logger.info("Connecting without token...")
           c.connect()
         case Some(opt) => 
-          println("Connecting with option..." + opt)
+          logger.info("Connecting with option..." + opt)
           c.connect(opt)
       }
-      println("Connected.")
+      logger.info("Connected.")
       c
     }.flatMap { client =>
       val result = Try {
@@ -33,9 +33,9 @@ object Mqtt {
       }
 
       try {
-        println("Disconnectiong...")
+        logger.info("Disconnectiong...")
         client.disconnect()
-        println("Disconnected.")
+        logger.info("Disconnected.")
       }
       catch {
         case e: MqttException => logger.error("Error in disconnecting mqtt client.", e)

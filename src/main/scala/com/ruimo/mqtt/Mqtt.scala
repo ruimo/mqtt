@@ -1,7 +1,7 @@
 package com.ruimo.mqtt
 
 import scala.util.{Try, Success, Failure}
-import org.eclipse.paho.client.mqttv3.{MqttClient, MqttException, MqttMessage, MqttConnectOptions, MqttCallback, IMqttDeliveryToken}
+import org.eclipse.paho.client.mqttv3.{MqttClient, MqttException, MqttMessage => PahoMqttMessage, MqttConnectOptions, MqttCallback, IMqttDeliveryToken}
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -9,30 +9,30 @@ import org.slf4j.LoggerFactory
 object Mqtt {
   val logger = LoggerFactory.getLogger(getClass)
 
-  private def nullOnConnectionLost(client: MqttClient, cause: Throwable) {}
-  private def nullOnMessageArrived(client: MqttClient, topic: String, message: MqttMessage) {}
-  private def nullOnDeliveryComplete(client: MqttClient, token: IMqttDeliveryToken) {}
+  private def nullOnConnectionLost(cause: Throwable) {}
+  private def nullOnMessageArrived(topic: String, message: MqttMessage) {}
+  private def nullOnDeliveryComplete(token: IMqttDeliveryToken) {}
 
   // You need to call MqttClient.disconnect() by yourself.
   def createClient(
     url: String, clientId: String, 
     connectOption: Option[MqttConnectOptions] = None,
-    onConnectionLost: (MqttClient, Throwable) => Unit = nullOnConnectionLost,
-    onMessageArrived: (MqttClient, String, MqttMessage) => Unit = nullOnMessageArrived,
-    onDeliveryComplete: (MqttClient, IMqttDeliveryToken) => Unit = nullOnDeliveryComplete
+    onConnectionLost: (Throwable) => Unit = nullOnConnectionLost,
+    onMessageArrived: (String, MqttMessage) => Unit = nullOnMessageArrived,
+    onDeliveryComplete: (IMqttDeliveryToken) => Unit = nullOnDeliveryComplete
   ): MqttClient = {
     val c = new MqttClient(url, clientId)
     c.setCallback(new MqttCallback {
       override def connectionLost(cause: Throwable) {
-        onConnectionLost(c, cause)
+        onConnectionLost(cause)
       }
 
-      override def messageArrived(topic: String, message: MqttMessage) {
-        onMessageArrived(c, topic, message)
+      override def messageArrived(topic: String, message: PahoMqttMessage) {
+        onMessageArrived(topic, MqttMessage(message))
       }
 
       override def deliveryComplete(token: IMqttDeliveryToken) {
-        onDeliveryComplete(c, token)
+        onDeliveryComplete(token)
       }
     })
     connectOption match {
@@ -50,9 +50,9 @@ object Mqtt {
   def withClient[T](
     url: String, clientId: String, 
     connectOption: Option[MqttConnectOptions] = None,
-    onConnectionLost: (MqttClient, Throwable) => Unit = nullOnConnectionLost,
-    onMessageArrived: (MqttClient, String, MqttMessage) => Unit = nullOnMessageArrived,
-    onDeliveryComplete: (MqttClient, IMqttDeliveryToken) => Unit = nullOnDeliveryComplete
+    onConnectionLost: (Throwable) => Unit = nullOnConnectionLost,
+    onMessageArrived: (String, MqttMessage) => Unit = nullOnMessageArrived,
+    onDeliveryComplete: (IMqttDeliveryToken) => Unit = nullOnDeliveryComplete
   )(f: MqttClient => T): Try[T] = 
     Try {
       createClient(
@@ -78,9 +78,9 @@ object Mqtt {
 
   def withClientWithUserPassword[T](
     url: String, clientId: String, user: String, password: String,
-    onConnectionLost: (MqttClient, Throwable) => Unit = nullOnConnectionLost,
-    onMessageArrived: (MqttClient, String, MqttMessage) => Unit = nullOnMessageArrived,
-    onDeliveryComplete: (MqttClient, IMqttDeliveryToken) => Unit = nullOnDeliveryComplete
+    onConnectionLost: (Throwable) => Unit = nullOnConnectionLost,
+    onMessageArrived: (String, MqttMessage) => Unit = nullOnMessageArrived,
+    onDeliveryComplete: (IMqttDeliveryToken) => Unit = nullOnDeliveryComplete
   )(f: MqttClient => T): Try[T] = {
     val connectOption = new MqttConnectOptions
     connectOption.setUserName(user)

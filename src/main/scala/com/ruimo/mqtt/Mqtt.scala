@@ -13,6 +13,40 @@ object Mqtt {
   private def nullOnMessageArrived(client: MqttClient, topic: String, message: MqttMessage) {}
   private def nullOnDeliveryComplete(client: MqttClient, token: IMqttDeliveryToken) {}
 
+  // You need to call MqttClient.disconnect() by yourself.
+  def createClient(
+    url: String, clientId: String, 
+    connectOption: Option[MqttConnectOptions] = None,
+    onConnectionLost: (MqttClient, Throwable) => Unit = nullOnConnectionLost,
+    onMessageArrived: (MqttClient, String, MqttMessage) => Unit = nullOnMessageArrived,
+    onDeliveryComplete: (MqttClient, IMqttDeliveryToken) => Unit = nullOnDeliveryComplete
+  ): MqttClient = {
+    val c = new MqttClient(url, clientId)
+    c.setCallback(new MqttCallback {
+      override def connectionLost(cause: Throwable) {
+        onConnectionLost(c, cause)
+      }
+
+      override def messageArrived(topic: String, message: MqttMessage) {
+        onMessageArrived(c, topic, message)
+      }
+
+      override def deliveryComplete(token: IMqttDeliveryToken) {
+        onDeliveryComplete(c, token)
+      }
+    })
+    connectOption match {
+      case None =>
+        logger.info("Connecting without token...")
+        c.connect()
+      case Some(opt) =>
+        logger.info("Connecting with option..." + opt)
+        c.connect(opt)
+    }
+    logger.info("Connected.")
+    c
+  }
+
   def withClient[T](
     url: String, clientId: String, 
     connectOption: Option[MqttConnectOptions] = None,
@@ -21,30 +55,10 @@ object Mqtt {
     onDeliveryComplete: (MqttClient, IMqttDeliveryToken) => Unit = nullOnDeliveryComplete
   )(f: MqttClient => T): Try[T] = 
     Try {
-      val c = new MqttClient(url, clientId)
-      c.setCallback(new MqttCallback {
-        override def connectionLost(cause: Throwable) {
-          onConnectionLost(c, cause)
-        }
-
-        override def messageArrived(topic: String, message: MqttMessage) {
-          onMessageArrived(c, topic, message)
-        }
-
-        override def deliveryComplete(token: IMqttDeliveryToken) {
-          onDeliveryComplete(c, token)
-        }
-      })
-      connectOption match {
-        case None => 
-          logger.info("Connecting without token...")
-          c.connect()
-        case Some(opt) => 
-          logger.info("Connecting with option..." + opt)
-          c.connect(opt)
-      }
-      logger.info("Connected.")
-      c
+      createClient(
+        url, clientId, connectOption,
+        onConnectionLost, onMessageArrived, onDeliveryComplete
+      )
     }.flatMap { client =>
       val result = Try {
         f(client)

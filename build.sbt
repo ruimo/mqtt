@@ -4,7 +4,7 @@ organization := "com.ruimo"
 
 version := "1.0-SNAPSHOT"
 
-crossScalaVersions := List("2.10.4", "2.11.2") 
+scalaVersion := "2.11.6"
 
 publishTo := Some(
   Resolver.file(
@@ -21,6 +21,8 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 
 scalacOptions in Test ++= Seq("-Yrangepos")
 
+resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+
 resolvers += "Eclipse paho" at "https://repo.eclipse.org/content/repositories/paho-releases/"
 
 resolvers += "ruimo.com" at "http://static.ruimo.com/release"
@@ -32,8 +34,11 @@ libraryDependencies += "org.eclipse.paho" % "org.eclipse.paho.client.mqttv3" % "
 libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-core" % "1.1.3",
   "ch.qos.logback" % "logback-classic" % "1.1.3",
-  "org.slf4j" % "slf4j-api" % "1.7.12"
+  "org.slf4j" % "slf4j-api" % "1.7.12",
+  "org.specs2" %% "specs2-core" % "3.5" % "test"
 )
 
 // Ruimo scoins
 libraryDependencies += "com.ruimo" %% "scoins" % "1.0-SNAPSHOT"
+
+scalacOptions += "-feature"

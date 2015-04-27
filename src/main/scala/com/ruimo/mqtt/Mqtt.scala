@@ -51,7 +51,7 @@ object Mqtt {
       }
 
       try {
-        logger.info("Disconnectiong...")
+        logger.info("Disconnecting...")
         client.disconnect()
         logger.info("Disconnected.")
       }

@@ -14,6 +14,19 @@ object Mqtt {
   private def nullOnDeliveryComplete(token: IMqttDeliveryToken) {}
 
   // You need to call MqttClient.disconnect() by yourself.
+  def createClientWithUserPassword(
+    url: String, clientId: String, user: String, password: String,
+    onConnectionLost: (Throwable) => Unit = nullOnConnectionLost,
+    onMessageArrived: (String, MqttMessage) => Unit = nullOnMessageArrived,
+    onDeliveryComplete: (IMqttDeliveryToken) => Unit = nullOnDeliveryComplete
+  ): MqttClient = {
+    val connectOption = new MqttConnectOptions
+    connectOption.setUserName(user)
+    connectOption.setPassword(password.toCharArray)
+    createClient(url, clientId, Some(connectOption), onConnectionLost, onMessageArrived, onDeliveryComplete)
+  }
+
+  // You need to call MqttClient.disconnect() by yourself.
   def createClient(
     url: String, clientId: String, 
     connectOption: Option[MqttConnectOptions] = None,
@@ -47,18 +60,9 @@ object Mqtt {
     c
   }
 
-  def withClient[T](
-    url: String, clientId: String, 
-    connectOption: Option[MqttConnectOptions] = None,
-    onConnectionLost: (Throwable) => Unit = nullOnConnectionLost,
-    onMessageArrived: (String, MqttMessage) => Unit = nullOnMessageArrived,
-    onDeliveryComplete: (IMqttDeliveryToken) => Unit = nullOnDeliveryComplete
-  )(f: MqttClient => T): Try[T] = 
+  def withClient[T](clientFactory: () => MqttClient)(f: MqttClient => T): Try[T] = 
     Try {
-      createClient(
-        url, clientId, connectOption,
-        onConnectionLost, onMessageArrived, onDeliveryComplete
-      )
+      clientFactory()
     }.flatMap { client =>
       val result = Try {
         f(client)
@@ -75,17 +79,4 @@ object Mqtt {
 
       result
     }
-
-  def withClientWithUserPassword[T](
-    url: String, clientId: String, user: String, password: String,
-    onConnectionLost: (Throwable) => Unit = nullOnConnectionLost,
-    onMessageArrived: (String, MqttMessage) => Unit = nullOnMessageArrived,
-    onDeliveryComplete: (IMqttDeliveryToken) => Unit = nullOnDeliveryComplete
-  )(f: MqttClient => T): Try[T] = {
-    val connectOption = new MqttConnectOptions
-    connectOption.setUserName(user)
-    connectOption.setPassword(password.toCharArray)
-
-    withClient(url, clientId, Some(connectOption), onConnectionLost, onMessageArrived, onDeliveryComplete)(f)
-  }
 }

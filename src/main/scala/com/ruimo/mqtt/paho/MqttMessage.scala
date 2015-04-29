@@ -1,7 +1,8 @@
-package com.ruimo.mqtt
+package com.ruimo.mqtt.paho
 
 import org.eclipse.paho.client.mqttv3.{MqttMessage => PahoMqttMessage}
 import com.ruimo.scoins.ImmutableByteArray
+import com.ruimo.mqtt.Qos
 
 // Immutable MqttMessage.
 case class MqttMessage(

@@ -1,4 +1,4 @@
-package com.ruimo.mqtt
+package com.ruimo.mqtt.mqttclient
 
 import scala.util.{Try, Success, Failure}
 import org.fusesource.mqtt.client.{MQTT, BlockingConnection => Connection}

@@ -1,4 +1,4 @@
-package com.ruimo.mqtt
+package com.ruimo.mqtt.paho
 
 import scala.util.{Try, Success, Failure}
 import org.eclipse.paho.client.mqttv3.{MqttClient, MqttException, MqttMessage => PahoMqttMessage, MqttConnectOptions, MqttCallback, IMqttDeliveryToken}
@@ -7,7 +7,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 // Adapter for patho http://eclipse.org/paho/
-object Paho {
+object Mqtt {
   val logger = LoggerFactory.getLogger(getClass)
 
   private def nullOnConnectionLost(cause: Throwable) {}

@@ -9,8 +9,12 @@ case class MqttMessage(
 )
 
 object MqttMessage {
-  def apply(m: Message): MqttMessage = MqttMessage(
-    topic = m.getTopic,
-    payload = ImmutableByteArray(m.getPayload)
-  )
+  def apply(m: Message): MqttMessage = {
+    val result = MqttMessage(
+      topic = m.getTopic,
+      payload = ImmutableByteArray(m.getPayload)
+    )
+    m.ack()
+    result
+  }
 }

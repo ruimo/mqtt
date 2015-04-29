@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 object BlockingMqttClient {
   val logger = LoggerFactory.getLogger(getClass)
 
-  def createConnectionithUserPassword(
+  def createConnectionWithUserPassword(
     url: String, clientId: String, user: String, password: String
   ): Connection = {
     val mqtt = new MQTT

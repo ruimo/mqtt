@@ -6,7 +6,8 @@ import org.eclipse.paho.client.mqttv3.{MqttClient, MqttException, MqttMessage =>
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-object Mqtt {
+// Adapter for patho http://eclipse.org/paho/
+object Paho {
   val logger = LoggerFactory.getLogger(getClass)
 
   private def nullOnConnectionLost(cause: Throwable) {}

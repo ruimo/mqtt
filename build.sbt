@@ -30,6 +30,9 @@ resolvers += "ruimo.com" at "http://static.ruimo.com/release"
 // Eclipse paho
 libraryDependencies += "org.eclipse.paho" % "org.eclipse.paho.client.mqttv3" % "1.0.2"
 
+// mqtt-client
+libraryDependencies += "org.fusesource.mqtt-client" % "mqtt-client" % "1.10"
+
 // Logging
 libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-core" % "1.1.3",

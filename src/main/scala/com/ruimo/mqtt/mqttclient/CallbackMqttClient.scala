@@ -29,4 +29,15 @@ object CallbackMqttClient {
       success
     }
   }
+
+  def callback[T](
+    success: T => Unit, failure: Throwable => Unit
+  ): Callback[T] = new Callback[T] {
+    override def onFailure(t: Throwable) {
+      failure(t)
+    }
+    override def onSuccess(value: T) {
+      success(value)
+    }
+  }
 }

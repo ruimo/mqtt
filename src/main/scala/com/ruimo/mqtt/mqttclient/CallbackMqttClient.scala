@@ -19,14 +19,14 @@ object CallbackMqttClient {
     mqtt.callbackConnection()
   }
 
-  def voidCallback[T](
-    success: T => Unit, failure: Throwable => Unit
-  ): Callback[T] = new Callback[T] {
+  def voidCallback(
+    success: => Unit, failure: Throwable => Unit
+  ): Callback[Void] = new Callback[Void] {
     override def onFailure(t: Throwable) {
       failure(t)
     }
-    override def onSuccess(value: T) {
-      success(value)
+    override def onSuccess(value: Void) {
+      success
     }
   }
 }

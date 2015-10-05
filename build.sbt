@@ -42,6 +42,6 @@ libraryDependencies ++= Seq(
 )
 
 // Ruimo scoins
-libraryDependencies += "com.ruimo" %% "scoins" % "1.0-SNAPSHOT"
+libraryDependencies += "com.ruimo" %% "scoins" % "1.0"
 
 scalacOptions += "-feature"

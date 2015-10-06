@@ -12,6 +12,7 @@ object CallbackMqttClient {
     url: String, clientId: String, user: String, password: String
   ): Connection = {
     val mqtt = new MQTT
+    mqtt.setTracer(new MqttTracer(logger))
     mqtt.setHost(url)
     mqtt.setClientId(clientId)
     mqtt.setUserName(user)

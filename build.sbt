@@ -31,7 +31,7 @@ resolvers += "ruimo.com" at "http://static.ruimo.com/release"
 libraryDependencies += "org.eclipse.paho" % "org.eclipse.paho.client.mqttv3" % "1.0.2"
 
 // mqtt-client
-libraryDependencies += "org.fusesource.mqtt-client" % "mqtt-client" % "1.10"
+libraryDependencies += "org.fusesource.mqtt-client" % "mqtt-client" % "1.12"
 
 // Logging
 libraryDependencies ++= Seq(
@@ -42,6 +42,6 @@ libraryDependencies ++= Seq(
 )
 
 // Ruimo scoins
-libraryDependencies += "com.ruimo" %% "scoins" % "1.0"
+libraryDependencies += "com.ruimo" %% "scoins" % "1.2"
 
 scalacOptions += "-feature"

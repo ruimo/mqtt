@@ -4,7 +4,7 @@ name := """mqtt"""
 
 organization := "com.ruimo"
 
-version := "1.2"
+version := "1.3-SNAPSHOT"
 
 publishTo := Some(
   Resolver.file(
